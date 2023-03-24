@@ -1,0 +1,85 @@
+CREATE DATABASE crowdfunding_db
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    CONNECTION LIMIT = -1
+    IS_TEMPLATE = False;
+
+
+
+CREATE TABLE public.campaign
+(
+    cf_id integer NOT NULL,
+    contact_id integer NOT NULL,
+    company_name character varying(100) NOT NULL,
+    description text NOT NULL,
+    goal numeric NOT NULL,
+    pledged numeric NOT NULL,
+    outcome character varying(50) NOT NULL,
+    backers_count integer NOT NULL,
+    country character varying NOT NULL,
+    currency character varying NOT NULL,
+    launch_date date NOT NULL,
+    end_date date NOT NULL,
+    category_id character varying NOT NULL,
+    subcategory_id character varying NOT NULL,
+    PRIMARY KEY (cf_id)
+);
+
+
+
+CREATE TABLE public.category
+(
+    category_id character varying NOT NULL,
+    category_name character varying NOT NULL,
+    PRIMARY KEY (category_id)
+);
+
+
+CREATE TABLE public.subcategory
+(
+    subcategory_id character varying NOT NULL,
+    subcategory_name character varying NOT NULL,
+    PRIMARY KEY (subcategory_id)
+);
+
+
+CREATE TABLE public.contacts
+(
+    contact_id integer NOT NULL,
+    first_name character varying NOT NULL,
+    last_name character varying NOT NULL,
+    email character varying NOT NULL,
+    PRIMARY KEY (contact_id)
+);
+
+
+ALTER TABLE IF EXISTS public.campaign
+    ADD CONSTRAINT campaign FOREIGN KEY (contact_id)
+    REFERENCES public.contacts (contact_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+CREATE INDEX IF NOT EXISTS fki_campaign
+    ON public.campaign(contact_id);
+
+
+
+ALTER TABLE IF EXISTS public.campaign
+    ADD CONSTRAINT campaign2 FOREIGN KEY (category_id)
+    REFERENCES public.category (category_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+CREATE INDEX IF NOT EXISTS fki_campaign2
+    ON public.campaign(category_id);
+
+
+ALTER TABLE IF EXISTS public.campaign
+    ADD CONSTRAINT campaign3 FOREIGN KEY (subcategory_id)
+    REFERENCES public.subcategory (subcategory_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+CREATE INDEX IF NOT EXISTS fki_campaign3
+    ON public.campaign(subcategory_id);
